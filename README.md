@@ -3,13 +3,13 @@
 ****P***roblem Namba 3*, is about a book that all *n* persons want to read,
 but everyone can give it only to one of his friends. The question is to find
 sequence of passes **such** that everyone recieves the book only once and the last reciever
-returns it back to the book owner *(Bobby)*
+returns it to the book owner *(Bobby)*
 
 **T**he second part of the problem follows after finishing with the readings,
-the persons have to be divided into *s* *discussion* subgroups ***(!)***
-so that each member has no more than *p* enemies. You can view the problem in
-detail [**here**](https://ioinformatics.org/files/ioi1989problem3.pdf).
-**L**et's start our own discussion with..
+the persons have to be divided into **s** *discussion* subgroups ***(!)***
+so that each member has no more than *p* enemies. You can view the problem
+[**here**](https://ioinformatics.org/files/ioi1989problem3.pdf).
+Let's start our own discussion with..
 
 ## enemy *(e7àTe noBe¼e)*
 
@@ -36,25 +36,24 @@ C<sub>n - k<sub>1</sub></sub><sup>k<sub>2</sub></sup> .. 1***
 *(0, 1, 2) (3, 4) (5)* **(0, 1, 2) (3, 5) (4)** .. ***(3, 4, 5) (1, 2) (0)***
 
 ```WE CAN dO thiS USiNG RECURSiON tEChNiQUES``` *as* **b4**, ```bUt VE``` *hafe* ```tO kNOW hOW tO GENERAtE All```
-***partitions*** ```ANd``` **ol** ```COMbiNAtiONS.``` The key *here* is that in both cases the order
+**partitions** ```ANd``` **öll** ```COMbiNAtiONS.``` The key *here* is that in both cases the order
 doesn't matter, zo to find ze algorithmz we can write them in a dictionary
 order (or as they say *lexicographical* but I hate that word it sounds like
 **Segmentation Fault**). Once that**z** done it's easy to find the logic.
 
 ## friend
-*OKAY* I've already got fed up a little bit with all those tree search problems,
-so I've decided to write slightly different algorithm with explicit pushing and popping,
-like in *Knuth* books. Recall that when high level languages are translated to assembly,
-stack frames are created for procedures, where local data is placed. Thus when entering
-and exiting a function we have an implicit pushing and popping, it is easier to write
-programs in such a way but we are loosing control over the function, for example,
-be cos of the program's linkage, it's not so easy to exit a recursive call, we have
-to pass back through all created stack frames.
+I've already got fed up a little bit with all those tree search problems,
+so decided to write slightly different algorithm with explicit ***pushing*** and ***popping***,
+like in *Knuth* books. When high level languages are translated to assembly,
+*stack frames* are created for procedures' local data. Thus when entering
+and exiting a function we have an implicit pushing and popping. It is easier to write
+functions that way but for the price of loosing control, for example,
+it's not so straightforward to exit a recursive function.
 
 ## make no mistake!..
 ```./book.py 11 4 3 0 1```
 
-..becoz there is no error cking, command arguments are *n, s, k, p, b* where *b* is the
+..coß there is no error cking, command arguments are *n, s, k, p, b* where *b* is the
 book's owner index, and the others are the same as defined in the problem.
 If no arguments are given the program will use its default values. All persons
 above 10 are named Dwarf10, Dwarf11, and so on.
@@ -128,4 +127,4 @@ For relaxing times, make it Suntory Time!
 
 ![face2](pix/face2.png)
 
-https://youtu.be/NiuDxl6GU_I
+https://youtu.be/haOYwQo3FGs

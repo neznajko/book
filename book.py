@@ -3,24 +3,23 @@ import random
 import sys
 
 def init_combo(n, k): #------------------------------------------------#
+    """ The tricky stuff here is the presence of a Sentinel """
     c = list(range(k)) #                                               #
     c.append(n) #                                             Sentinel #
     return c #---------------------------------------------------------#
 
 def next_combo(c, k): #````````````````````````````````````````````````#
-    j = k - 1 #                             find position to increment #
-    while j is not -1: #                                               #
+    for j in reversed(range(k)): #                                     #
         if c[j] + 1 != c[j + 1]: #                                     #
-            break; #                                                   #
-        j -= 1 #                                                       #
-    if j is -1: #                                           ar ve don? #
+            break; #                                             thatz #
+    else: #                                                 ve ar don? #
         return False #                                            Yez! #
     c[j] += 1 #                                              increment #
-    for i in range(j + 1, k): #                                        #
-        c[i] = c[i - 1] + 1 #                                          #
+    for i in range(j, k - 1): # init next ones to the lowest order seq #
+        c[i + 1] = c[i] + 1 #                                          #
     return True #``````````````````````````````````````````````````````#
 
-def Combo(n, k): #========================================== generator #
+def Combo(n, k): #==================================== combo generator #
     c = init_combo(n, k) #                                             #
     while True: #                                                      #
         yield c[:-1] #                              dodge the Sentinel #
@@ -28,7 +27,9 @@ def Combo(n, k): #========================================== generator #
             raise StopIteration #========================== ve ar don! #
 
 def init_partition(n, s): #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-    """ s - number of subgroups """
+    """ s - number of subgroups,
+        here we are in a reversed order, becoz when cking for enemies
+        it's better to start with the largest subgroup """
     s -= 1 #                                                           #
     return [n - s] + [1] * s #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #   ,  ,  ,  ,  ,  ,  ,  ,  ,  ,  ,  ,  ,  ,  ,  ,  ,  ,  ,  ,  ,  ,  ,
@@ -40,14 +41,12 @@ def next_partition(p, s): #;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;#
     for i in range(s - 1): #                                           #
         for j in range(i + 1, s): #                                    #
             if p[i] - p[j] > 1: #                                      #
-                orig = i #                                             #
-                dest = j #                                             #
+                orig, dest = i, j #                                    #
                 break #                                                #
-    if dest: #                                                         #
-        p[orig] -= 1 #                                                 #
-        p[dest] += 1 #                                                 #
-        return True #                                                  #
-    return False #;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;#
+    if dest == 0: return False #                                       #
+    p[orig] -= 1 #                                                     #
+    p[dest] += 1 #                                                     #
+    return True #;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;#
 
 def Partition(n, s): #'''''''''''''''''''''''''''''''''''''''''''''''''#
     p = init_partition(n, s) #                                         #
@@ -56,25 +55,16 @@ def Partition(n, s): #'''''''''''''''''''''''''''''''''''''''''''''''''#
         if not next_partition(p, s): #                                 #
             raise StopIteration #''''''''''''''''''''''''''''''''''''''#
 
-def enemy_count(j, fellow): # - - - - - - - - - - - - - - - - - - - - - 
-    """ count j's enemies in the fellow list """
-    cntr = 0 #                                                         ^
-    for f in fellow: #                                                 ^
-        if f in enemy[j]: #                                            ^
-            cntr += 1 #                                                ^
-    return cntr # - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-class group(list): #___________________________________________________
-    """ group of persons (indexes) """                                  
-    def __str__(self): #                                               )
+class group(list): #____________________________________________________
+    """ group of indexes """                                  
+    def __str__(self): #_______________________________________________
         return '[' + ', '.join(list(map(getnom, self))) + ']' #________
 
     def enemyck(self): #``````````````````````````````````` enemy check
-        """ enemy ck of the persons discussing the book """
+        """ enemy ck among the colleagues discussing the book """
         for j in self: #                                               `
-            fellow = group(self) #                                     `
-            fellow.remove(j) #                                         `
-            if enemy_count(j, fellow) > p: #                           `
+            n_enemy = sum(c in enemy[j] for c in self) #  #j's enemies `
+            if n_enemy > p: #                                          `
                 return False #__ _  _   _    _     _      _     eNOuPe `
         return True # OKAY ````````````````````````````````````````````
     
@@ -88,13 +78,11 @@ class node: #, , , , , , , , , , , , , , , , , , , , , , , , , , , , , #
     def fork(self, c): #,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,
         """ split a subgroup indexed by c from self.othr """
         nd = node([], self.othr) #                                     ,
-        subg, othr = nd.subg, nd.othr #                                ,
         for j in c: #                                                  ,
-            subg.append(othr[j]) #                                     ,
-        if not subg.enemyck():
-            return None # too many enemies to discuss ,
-        for j in c: #                                                  ,
-            othr.remove(self.othr[j]) #                                ,
+            nd.subg.append(self.othr[j]) #                             ,
+            nd.othr.remove(self.othr[j]) #                             ,
+        if not nd.subg.enemyck(): #                                    ,
+            return None #            too many enemies for a discussion ,
         nd.level = self.level + 1 #                                    ,
         nd.parent = self #                                             ,
         return nd #_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,
@@ -127,14 +115,14 @@ def get_leaf_str(nd): #ZNZNZNZNZNZNZNZNZNZNZNZNZNZNZNZNZNZNZNZNZNZNZNZN
     return s #ZNZNZNZNZNZNZNZNZNZNZNZNZNZNZNZNZNZNZNZNZNZNZNZNZNZNZNZNZ
 
 def sample(mn, mx): #* * * * * * * * * * * * * * * * * * * * * * * * * #
-    """ builds random enemies and buddies """
-    def sample_funk(x): # ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` #    #
-        """ Yeah my first nested function """                          #
-        y = g[:] # , , , , , , , , , , , , , , Copy Ninja Kakashi #    #
-        y.remove(x) #_____________________________________________#    #
-        z = group(random.sample(y, random.randint(mn, mx))) #     #    #
-        z.sort() #                                                #    #
-        return z #~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ #    #
+    """ build random enemies and buddies """
+    def sample_funk(x): # ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` *    #
+        """ Yeah, my first nested function """                         
+        y = g[:] # , , , , , , , , , , , , , , Copy Ninja Kakashi *    #
+        y.remove(x) #_____________________________________________*    #
+        y = group(random.sample(y, random.randint(mn, mx))) #     *    #
+        y.sort() #                                                *    #
+        return y #~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ *    #
     return group(map(sample_funk, g)) #................................#
 
 if sys.argv[1:]: #-----------------------------------------------------+
@@ -148,7 +136,7 @@ else: #----------------------------------------------------------------+
     k = 4 #................................ maximum enemies per person |
     p = 0 #""""""""""""""""""""""""""""" maximum enemies in a subgroup |
     g = group(range(n)) #,,,,,,,,,,,,,,,,,,,,,,,, the group of persons |
-    b = 1 #::::::::::::::::::::::::::::::::::::::::::::::: book holder |
+    b = 1 #:::::::::::::::::::::::::::::::::::::::::::::::: book owner |
     buddy = [group([1, 3, 4, 5, 7]), #-----------  ----   ------ ------+
              group([0, 4, 5, 6, 7]), #            -                    |
              group([0, 1, 3, 6, 7]), #                                 |
@@ -200,17 +188,14 @@ def discussion_time(): #::..::..::..::..::..::..::..::..::..::..::..::..
             print("No Solution") #                                    ..
         stk.clear() #:..::..::..::..::..::..::..::..::..::..::..::..::..
 
+f = buddy #                                                   shortcut `
+
 def ck(i, j): #`````````````````````````````````````````````````````````
     """ ck if buddy[i][j] has already read the book """
-    for rec in stk: #                                                  `
-        if buddy[i][j] == rec[2]: #                                    `
-            return True #                                              `
-    return False #``````````````````````````````````````````````````````
+    return next((True for rec in stk if f[i][j] == rec[2]), False) #````
 
 def book_cycle(): #`,`,`,`,`,`,`,`,`,`,`,`,`,`,`,`,`,`,`,`,`,`,`,`,`,`,`
-    for ls in buddy: #                                    add Sentinel `
-        ls.append(n) #                                                 `
-    f = buddy #                                               shortcut `
+    for ls in f: ls.append(n) #                           add Sentinel `
     i = b #                     person passing the book to his friends `
     j = 0 #                                     receiver index in f[i] `
     levl = 0 #                           tree level (number of passes) `
@@ -234,7 +219,7 @@ def book_cycle(): #`,`,`,`,`,`,`,`,`,`,`,`,`,`,`,`,`,`,`,`,`,`,`,`,`,`,`
             levl -= 1 #`,`,`,`,`,`,`,`,`,`,`,`,`,`,`,`,`, update level `
     
 def reading_time(): #'''''''''''''''''''''''''''''''''''''''''''''''''''
-    print("Reading Time:")
+    print("Reading Time:") #                                           '
     dump(buddy) #                                                      '
     book_cycle() #                                                     '
     for rec in stk[1:]: #                                              '
@@ -242,8 +227,8 @@ def reading_time(): #'''''''''''''''''''''''''''''''''''''''''''''''''''
               getnom(buddy[rec[0]][rec[1]])) #                         '
     stk.clear() #'''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-def suntory_time():
-    print("For relaxing times, make it Suntory Time!")
+def suntory_time(): #---------------------------------------------------
+    print("For relaxing times, make it Suntory Time!") #----------------
 
 reading_time()
 discussion_time()
