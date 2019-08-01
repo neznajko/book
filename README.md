@@ -2,11 +2,9 @@
 
 ****P***roblem Namba 3*, is about a book that all *n* persons want to read,
 but everyone can give it only to one of his friends. The question is to find
-a sequence of passes **such** that everyone recieves the book only once and the last reciever
-returns it to the book owner *(Bobby)*
-
-**T**he second part of the problem follows after finishing with the readings,
-the persons have to be divided into **s** *discussion* subgroups ***(!)***
+a scenario, in which everyone recieves the book only once and the last reciever
+returns it back to the book owner. In the second part of the problem,
+the persons are divided into **s** *discussion* subgroups,
 so that each member has no more than *p* enemies. You can view the problem
 [**here**](https://ioinformatics.org/files/ioi1989problem3.pdf).
 Let's start our own discussion with..
