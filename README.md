@@ -2,7 +2,7 @@
 
 ****P***roblem Namba 3*, is about a book that all *n* persons want to read,
 but everyone can give it only to one of his friends. The question is to find
-sequence of passes **such** that everyone recieves the book only once and the last reciever
+a sequence of passes **such** that everyone recieves the book only once and the last reciever
 returns it to the book owner *(Bobby)*
 
 **T**he second part of the problem follows after finishing with the readings,
